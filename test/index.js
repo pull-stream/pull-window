@@ -9,16 +9,17 @@ require('tape')('window', function (t) {
   var i = 0
 
     return function (abort, cb) {
+      if(abort) return cb(true)
       setTimeout(function () {
         cb(null, i++)
-      }, Math.random() * 200)
+      }, Math.random() * 75)
     }
   })()
-  .pipe(pull.take(20))
+  .pipe(pull.take(50))
   .pipe(pull.through(function (e) {
     all.push(e)
   }))
-  .pipe(window())
+  .pipe(window(20, 200))
   .pipe(pull.through(console.log))
   .pipe(pull.collect(function (err, ary) {
     t.notOk(err)
