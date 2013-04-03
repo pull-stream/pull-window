@@ -1,0 +1,19 @@
+{
+  "name": "pull-window",
+  "description": "",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dominictarr/pull-window",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dominictarr/pull-window.git"
+  },
+  "dependencies": {
+    "pull-stream": "~2.9.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "set -e; for t in test/*.js; do node $t; done"
+  },
+  "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
+  "license": "MIT"
+}
