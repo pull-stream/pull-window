@@ -13,7 +13,6 @@ pull.Through(function (read, size, time) {
       if(stopped) return
       stopped = true
       clearTimeout(t)
-      console.log('ended', queue, ended)
       if(queue.length) {
         var q = queue; queue = []
         cbs.shift()(null, q)
@@ -39,7 +38,7 @@ pull.Through(function (read, size, time) {
       })
     })()
 
-    t = setTimeout(done, time || 300)
+    t = setTimeout(done, time)
   }
 
   return function (abort, cb) {
