@@ -8,7 +8,7 @@
     "url": "git://github.com/dominictarr/pull-window.git"
   },
   "dependencies": {
-    "pull-stream": "~2.9.0"
+    "pull-stream": "~2.10"
   },
   "devDependencies": {},
   "scripts": {
