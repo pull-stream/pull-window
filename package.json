@@ -8,9 +8,12 @@
     "url": "git://github.com/dominictarr/pull-window.git"
   },
   "dependencies": {
-    "pull-stream": "~2.10"
+    "pull-core": "~1.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "pull-stream": "~2.18",
+    "tape": "~1.0.2"
+  },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
   },
