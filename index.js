@@ -1,51 +1,85 @@
+var Through = require('pull-core').Through
 var pull = require('pull-stream')
-module.exports = 
-pull.Through(function (read, size, time) {
-  var cbs = [], flight = false, queue = [], ended = false, t
 
-  size = size || 5
-  time = time || 300
-
-  function pull() {
-    if(flight) return
-    var stopped = false
-    function done() {
-      if(stopped) return
-      stopped = true
-      clearTimeout(t)
-      if(queue.length) {
-        var q = queue; queue = []
-        cbs.shift()(null, q)
-      }
-      else if(ended)
-        cbs.shift()(ended)
-
-      if(cbs.length) pull()
-    }
-
-   ;(function next() {
-      flight = true
-      read(null, function (end, data) {
-        flight = false
-        ended = end
-        if(!end) queue.push(data)
-        if(stopped && cbs.length)
-          pull()
-        else if(!ended && queue.length < size)
-          next()
-        else
-          done()
-      })
-    })()
-
-    t = setTimeout(done, time)
+var window = module.exports = 
+Through(function (read, init, start) {
+  start = start || function (start, data) {
+    return {start: start, data: data}
   }
+  var windows = [], output = [], ended = null
 
   return function (abort, cb) {
-    if(abort) return read(abort, cb)
-    cbs.push(cb)
-    pull()
-  }
+    if(output.length)
+      return cb(null, output.shift())
 
+    if(ended)
+      cb(ended)
+
+    read(abort, function next (end, data) {
+      var reduce, update, once = false
+      if(end) {
+        ended = end
+      }
+
+      function _update (end, _data) {
+        if(once) return
+        once = true
+        if(windows[0] != update)
+          return cb(new Error('unknown window.'
+            + 'windows must be strictly first in - first out'))
+        else
+          windows.shift()
+
+        output.push(start(data, _data))
+      }
+
+      if(!ended)
+        update = init(data, _update)
+
+      if(update)
+        windows.push(update)
+      else
+        //don't allow data unless a window started here!
+        once = true
+
+      windows.forEach(function (update, i) {
+        update(end, data)
+      })
+
+      if(output.length)
+        cb(null, output.shift())
+      else if(ended)
+        cb(ended)
+      else
+        read(null, next)
+    })
+  }
 })
 
+window.recent = function (size, time) {
+  var current = null
+  return window(function (data, cb) {
+    if(current) return
+    current = []
+    var timer
+      
+    function done () {
+      var _current = current
+      current = null
+      clearTimeout(timer)
+      cb(null, _current)
+    }
+
+    if(time)
+      timer = setTimeout(done, time)
+
+    return function (end, data) {
+      if(end) return done()
+      current.push(data)
+      if(size != null && current.length >= size)
+        done()
+    }
+  }, function (_, data) {
+    return data
+  })
+}
