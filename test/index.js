@@ -19,7 +19,7 @@ require('tape')('window', function (t) {
   .pipe(pull.through(function (e) {
     all.push(e)
   }))
-  .pipe(window(20, 200))
+  .pipe(window.recent(20, 200))
   .pipe(pull.through(console.log))
   .pipe(pull.collect(function (err, ary) {
     t.notOk(err)
