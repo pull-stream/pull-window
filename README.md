@@ -46,8 +46,7 @@ pull.count(1000)
 
 ## Example: variable sized window
 
-To have multiple windows going at once
-just return a function more often!
+Each window doesn't have to be the same size...
 
 ``` js
 var pull   = require('pull-stream')
@@ -76,6 +75,41 @@ pull.count(1000)
 .pipe(groupTo100))
 .pipe(pull.log())
 ```
+
+## Example: sliding window
+
+to make more over lapping windows
+just return the window function more often.
+
+``` js
+var pull   = require('pull-stream')
+var window = require('pull-window')
+
+function sliding () {
+  return window(function (_, cb) {
+    var sum = 0, i = 0
+
+    //sum stuff together until you have 100 or more
+    return function (end, data) {
+      if(end) return cb(null, sum)
+      sum += data
+      if(++i >= 10) {
+        //in this example, each window gets it's own sum,
+        //so we don't need to copy it.
+        cb(null, sum)
+      }
+    }
+  })
+}
+
+pull.count(100)
+.pipe(sliding))
+.pipe(pull.log())
+
+
+```
+
+
 
 ## License
 
