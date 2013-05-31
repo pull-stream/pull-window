@@ -105,10 +105,28 @@ function sliding () {
 pull.count(100)
 .pipe(sliding))
 .pipe(pull.log())
-
-
 ```
 
+
+## API
+
+``` js
+
+window(function startWindow (data, cb) {
+
+  //called on each chunk
+  //including the first one
+  return function addToWindow (end, data) {
+    //cb(null, aggregate) when done.
+  }
+}, function mapWindow (start, data) {
+  //(optional)
+  //map the window to something that tracks start, also
+})
+```
+
+By default, windows are mapped to `{start: firstData, data: aggregate}`.
+unless you pass in an different `mapWindow` function.
 
 
 ## License
