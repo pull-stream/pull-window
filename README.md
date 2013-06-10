@@ -39,9 +39,11 @@ function everyTen () {
   }
 }
 
-pull.count(1000)
-.pipe(everyTen))
-.pipe(pull.log())
+pull(
+  pull.count(1000),
+  everyTen(),
+  pull.log()
+)
 ```
 
 ## Example: variable sized window
@@ -71,9 +73,11 @@ function groupTo100 () {
   })
 }
 
-pull.count(1000)
-.pipe(groupTo100))
-.pipe(pull.log())
+pull(
+  pull.count(1000)
+  groupTo100(),
+  pull.log()
+)
 ```
 
 ## Example: sliding window
@@ -102,14 +106,18 @@ function sliding () {
   })
 }
 
-pull.count(100)
-.pipe(sliding))
-.pipe(pull.log())
+pull(
+  pull.count(100)
+  sliding(),
+  pull.log()
+)
 ```
 
 
 ## API
 
+
+### window (start, map)
 ``` js
 
 window(function startWindow (data, cb) {
@@ -128,6 +136,16 @@ window(function startWindow (data, cb) {
 By default, windows are mapped to `{start: firstData, data: aggregate}`.
 unless you pass in an different `mapWindow` function.
 
+
+### window.sliding(reduce, size)
+
+reduce every `size` items into a single value, in a sliding window
+
+### window.recent(size, time)
+
+tumbling window that groups items onto an array,
+either every `size` items, or within `time` ms,
+which ever occurs earliest. 
 
 ## License
 
