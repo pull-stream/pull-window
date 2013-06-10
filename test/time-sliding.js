@@ -17,29 +17,31 @@ test('timed window', function (t) {
     { start: 6, data: 21 },
     { start: 9, data: 30 } ]
 
-  pull.count(13)
-  .pipe(pull.asyncMap(function (data, cb) {
-    setTimeout(function () {
-      cb(null, data)
-    }, 100)
-  }))
-  .pipe(windows(function (data, cb) {
-    if(timer) return
-    var acc = 0
-    timer = setTimeout(function () {
-      timer = null
-      console.log('acc', acc)
-      cb(null, acc)
-    }, 300)
-    return function (end, data) {
-      if(end) return
-      acc += data
-    }
-  }, rememberStart))
-  .pipe(pull.collect(function (err, ary) {
-    t.notOk(err)
-    console.log(ary)
-    t.deepEqual(ary, expected)
-    t.end()      
-  }))
+  pull(
+    pull.count(13),
+    pull.asyncMap(function (data, cb) {
+      setTimeout(function () {
+        cb(null, data)
+      }, 100)
+    }),
+    windows(function (data, cb) {
+      if(timer) return
+      var acc = 0
+      timer = setTimeout(function () {
+        timer = null
+        console.log('acc', acc)
+        cb(null, acc)
+      }, 300)
+      return function (end, data) {
+        if(end) return
+        acc += data
+      }
+    }, rememberStart),
+    pull.collect(function (err, ary) {
+      t.notOk(err)
+      console.log(ary)
+      t.deepEqual(ary, expected)
+      t.end()      
+    })
+  )
 })

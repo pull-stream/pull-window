@@ -22,24 +22,26 @@ test('tumbling count', function (t) {
     { start: 91, data: 1261 },
     { start: 104, data: 1430 } ]
 
-  pull.count(127)
-  .pipe(windows(function (data, cb) {
-    if(!(i++ % 13)) {
-      if(last) last()
-      var acc = 0
-      last = function () { cb(null, acc) }
-      return function (end, data) {
-        if(end) return
-        acc = acc + data
+  pull(
+    pull.count(127),
+    windows(function (data, cb) {
+      if(!(i++ % 13)) {
+        if(last) last()
+        var acc = 0
+        last = function () { cb(null, acc) }
+        return function (end, data) {
+          if(end) return
+          acc = acc + data
+        }
       }
-    }
-  }, rememberStart))
-  .pipe(pull.collect(function (err, ary) {
-    t.notOk(err)
-    console.log(ary)
-    t.deepEqual(ary, expected)
-    t.end()
-  }))
+    }, rememberStart),
+    pull.collect(function (err, ary) {
+      t.notOk(err)
+      console.log(ary)
+      t.deepEqual(ary, expected)
+      t.end()
+    })
+  )
 
 })
 
