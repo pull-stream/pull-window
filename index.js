@@ -8,13 +8,15 @@ Through(function (read, init, start) {
   }
   var windows = [], output = [], ended = null
 
+  var j = 0
+
   return function (abort, cb) {
     if(output.length)
       return cb(null, output.shift())
-
     if(ended)
-      cb(ended)
-
+      return cb(ended)
+    var i = 0
+    var k = j ++
     read(abort, function next (end, data) {
       var reduce, update, once = false
       if(end) {
@@ -24,12 +26,7 @@ Through(function (read, init, start) {
       function _update (end, _data) {
         if(once) return
         once = true
-        if(windows[0] != update)
-          return cb(new Error('unknown window.'
-            + 'windows must be strictly first in - first out'))
-        else
-          windows.shift()
-
+        delete windows[windows.indexOf(update)]
         output.push(start(data, _data))
       }
 
@@ -46,12 +43,14 @@ Through(function (read, init, start) {
         update(end, data)
       })
 
-      if(output.length)
-        cb(null, output.shift())
-      else if(ended)
-        cb(ended)
-      else
+      if(output.length) {
+        return cb(null, output.shift())
+      }
+      else if(ended) {
+        return cb(ended)
+      } else {
         read(null, next)
+      }
     })
   }
 })
@@ -81,5 +80,21 @@ window.recent = function (size, time) {
     }
   }, function (_, data) {
     return data
+  })
+}
+
+window.sliding = function (reduce, width) {
+  width = width || 10
+  var k = 0
+  return window(function (data, cb) {
+    var acc
+    var i = 0
+    var l = k++
+    return function (end, data) {
+      if(end) return
+      acc = reduce(acc, data)
+      if(width <= ++ i)
+        cb(null, acc)
+    }
   })
 }
