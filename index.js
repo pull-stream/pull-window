@@ -1,6 +1,5 @@
-var Through = require('pull-core').Through
-var pull = require('pull-stream')
 var looper = require('looper')
+var Through = require('pull-core').Through
 
 var window = module.exports = 
 Through(function (read, init, start) {
