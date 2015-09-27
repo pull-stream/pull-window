@@ -1,7 +1,7 @@
 var looper = require('looper')
 var Through = require('pull-core').Through
 
-var window = module.exports = 
+var window = module.exports =
 Through(function (read, init, start) {
   start = start || function (start, data) {
     return {start: start, data: data}
@@ -20,9 +20,8 @@ Through(function (read, init, start) {
     read(abort, looper(function (end, data) {
       var next = this
       var reduce, update, once = false
-      if(end) {
+      if(end)
         ended = end
-      }
 
       function _update (end, _data) {
         if(once) return
@@ -44,17 +43,13 @@ Through(function (read, init, start) {
         update(end, data)
       })
 
-      if(output.length) {
+      if(output.length)
         return cb(null, output.shift())
-      }
-      else if(ended) {
+      else if(ended)
         return cb(ended)
-      } else {
-        read(null, next, function (_end, _data) {
-          end = _end; data = _data;
-          next(_end, _data)
-        })
-      }
+      else
+        read(null, next)
+
   }))
   }
 })
