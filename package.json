@@ -8,11 +8,10 @@
     "url": "git://github.com/dominictarr/pull-window.git"
   },
   "dependencies": {
-    "pull-core": "~1.0.0",
-    "looper": "2.0.0"
+    "looper": "^2.0.0"
   },
   "devDependencies": {
-    "pull-stream": "~2.20",
+    "pull-stream": "^3.4.0",
     "tape": "~1.0.4"
   },
   "scripts": {
@@ -21,3 +20,4 @@
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
   "license": "MIT"
 }
+
