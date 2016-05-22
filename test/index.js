@@ -6,7 +6,7 @@ var all = []
 require('tape')('window', function (t) {
 
   pull(
-    pull.Source(function () {
+    (function () {
     var i = 0
 
       return function (abort, cb) {

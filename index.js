@@ -1,8 +1,7 @@
 var looper = require('looper')
-var Through = require('pull-core').Through
 
-var window = module.exports =
-Through(function (read, init, start) {
+var window = module.exports = function (init, start) {
+return function (read) {
   start = start || function (start, data) {
     return {start: start, data: data}
   }
@@ -52,7 +51,7 @@ Through(function (read, init, start) {
 
   }))
   }
-})
+}}
 
 window.recent = function (size, time) {
   var current = null
@@ -97,3 +96,4 @@ window.sliding = function (reduce, width) {
     }
   })
 }
+
